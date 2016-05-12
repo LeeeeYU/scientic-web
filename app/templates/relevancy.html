@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container featurette">
+        <div class="row">
+            <div id="graphic" class="col-md-12">
+                <div id="main" style="height:400px;width:100%"></div>
+            </div><!--/span-->
+        </div><!--/row-->
+    </div><!--/.fluid-container-->
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript">
+        require.config({
+            packages: [
+                {
+                    name: 'echarts',
+                    location: '{{ url_for('static', filename='js/echarts/src') }}',
+                    main: 'echarts'
+                },
+                {
+                    name: 'zrender',
+                    // location: 'http://ecomfe.github.io/zrender/src',
+                    location: '{{ url_for('static', filename='js/zrender-master/src') }}',
+                    main: 'zrender'
+                }
+            ]
+        });
+
+        require(
+            [
+                'echarts',
+                'echarts/chart/line',
+                'echarts/chart/bar'
+            ],
+            drawLine
+        )
+        var myChart;
+
+        function drawLine(ec){
+            var myChart = ec.init(document.getElementById('main'));
+            myChart.showLoading({text: "图表数据正在努力加载..."});
+
+            var option = {
+                tooltip : {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data:[]
+                },
+                grid: {
+                    y2: 100
+                },
+                toolbox: {
+                    show : true,
+                    feature : {
+                        mark : {show: true},
+                        dataView : {show: true, readOnly: false},
+                        magicType : {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+                        restore : {show: true}
+                    }
+                },
+                calculable : false,
+                xAxis : [
+                    {
+                        boundaryGap: true ,
+                        scale: true , 
+                        type : 'category',
+                        axisLabel:{
+                            interval:0,
+                            rotate:45,
+                            margin:2,
+                            textStyle:{
+                                 color:"#222"
+                            }
+                        },
+                        data : []
+                    }
+                ],
+                yAxis : [
+                    {
+                        type : 'value',
+                        splitArea : {show : true}
+                    }
+                ],
+                series : []
+            };
+            $.ajax({
+                type: "GET",
+                async: false,
+                url: "{{url_for('getRelevancy')}}",
+                dataType: "json",
+                success: function(data){
+                    if(data.status == 200){
+                        option.xAxis[0].data = eval(data.data.category);
+                        option.series = eval(data.data.series);
+                        option.legend.data = eval(data.data.legend);
+                        myChart.hideLoading();
+                        myChart.setOption(option);
+                    }else{
+                        myChart.hideLoading();
+                        alert("图表请求数据失败啦!");
+                    }
+                }
+            });
+        }
+
+    </script>
+{% endblock %}

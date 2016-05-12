@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block content %}
+    
+    <div class="container featurette">
+        <div class="row">
+            <select id="atm" class="col-md-1 col-md-offset-1 form-control" style="width:18.33333%">
+            </select>
+            <p class="col-md-3">相关度：<span id="atmRel">...</span></p>
+            <p class="col-md-3">相关度（归一化）：<span id="atmNormalRel">...</span></p>
+        </div>
+        <div class="row">
+            <div id="graphic" class="col-md-12">
+                <div id="main" style="height:400px;width:100%"></div>
+            </div><!--/span-->
+        </div><!--/row-->
+    </div><!--/.fluid-container-->
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript">
+        var rel = [];
+        $.ajax({
+            type: "GET",
+            async: false,
+            url: "{{url_for('getRawRelevancy')}}",
+            dataType: "json",
+            success: function(data){
+                if(data.status == 200){
+                    var result = eval(data.data);
+                    atm = document.getElementById("atm");
+                    document.getElementById("atmRel").innerHTML = result[0][3];
+                    document.getElementById("atmNormalRel").innerHTML = result[0][2];
+                    for(var i=0; i<result.length; i++){
+                        atm.add(new Option(result[i][1],result[i][0]), null);
+                        rel[result[i][0]] = [result[i][1], result[i][2], result[i][3]];
+                    }
+                }else{
+                    alert("有问题，刷新试试！！");
+                }
+            }
+        });
+
+        $("#atm").change(function(){
+            myChart.showLoading({text: "图表数据正在努力加载..."});
+            document.getElementById("atmRel").innerHTML = rel[this.value][2];
+            document.getElementById("atmNormalRel").innerHTML = rel[this.value][1];
+            $.ajax({
+                type: "GET",
+                url: "{{url_for('getHistoryAtmsphere')}}"+"?atmsphere="+this.value,
+                dataType: "json",
+                success: function(result){
+                    if(result.status == 200){
+                        var option = myChart.getOption();
+                        option.series[1] = eval(result.data.series[0]);
+                        option.legend.data[1] = result.data.legend[0];
+                        option.yAxis[1].name = option.series[1].name+'('+option.series[1].unit+')';
+                        option.series[1].yAxisIndex = 1;
+                        myChart.hideLoading();
+                        myChart.setOption(option);
+                    }
+                }
+            })
+        })
+
+    </script>
+{% endblock %}

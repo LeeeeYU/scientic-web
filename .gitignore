@@ -1,0 +1,7 @@
+#python
+*.pyc
+*.png
+*.ui
+*.log
+~*.xlsx
+flask

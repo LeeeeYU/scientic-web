@@ -1,0 +1,29 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+{% block header%}
+<script type="text/javascript" src="{{ url_for('static', filename='echarts-asset/js/jquery.min.js') }}"></script>
+{% endblock %}
+{% block content %}
+
+<script type="text/javascript">
+	function getData(){
+		$.getJSON("{{url_for('getData')}}",{},function(data) {
+        	var obj = eval(data)
+        	alert(obj.result)
+      	});
+		$.ajax({
+			type: "GET",
+			url: "{{url_for('getData')}}",
+			dataType: "json",
+			sucess: function(data){
+				alert("success");
+			},
+			error: function(data){
+				alert("error");
+			}
+		});
+	}
+
+</script>
+<input type="button" value="测试ajax" onclick="getData();">
+{% endblock %}
