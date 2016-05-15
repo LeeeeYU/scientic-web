@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block header %}
+    <link href="{{url_for('static', filename='css/bootstrap-datetimepicker.min.css')}}" rel="stylesheet" media="screen">
+{% endblock %}
+{% block content %}
+    <div class="container featurette">        
+        <div class="row">
+            <select id="year" class="col-md-1 col-md-offset-1 form-control" style="width:10%">
+            </select>
+            <select id="month" class="col-md-1 form-control" style="width:10%;margin-left: 2%">
+            </select>
+            <select id="day" class="col-md-1 form-control" style="width:10%;margin-left: 2%">
+            </select>
+        </div>
+        <div class="row">
+                <div class="input-group date form_date col-md-4" data-date="" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
+                    <input class="form-control" size="16" type="text" value="" readonly>
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                </div>
+        </div>
+        <div class="row">
+            <div id="graphic" class="col-md-12">
+                <div id="main" style="height:400px;width:100%"></div>
+            </div><!--/span-->
+        </div><!--/row-->
+    </div><!--/.fluid-container-->
+{% endblock %}
+{% block script %}
+    <script type="text/javascript" src="{{url_for('static', filename='js/bootstrap-datetimepicker.js')}}" charset="UTF-8"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='js/bootstrap-datetimepicker.zh-CN.js')}}" charset="UTF-8"></script>
+
+    <script type="text/javascript">
+    $('.form_date').datetimepicker({
+        language: 'zh-CN',
+        startDate: '2007-01-01',
+        endDate: '2008-02-01',
+        format: 'yyyy-mm-dd',
+        weekStart: 1,
+        autoclose: 1,
+        startView: 2,
+        minView: 2,
+        forceParse: 0
+    });
+        // var calender = ['year': [], 'month': [], 'day':[]];
+        // function getCalener(){
+        //     $.ajax({
+        //         type: "GET",
+        //         async: false,
+        //         url: "{{url_for('getHistoryPowerConsume')}}",
+        //         dataType: "json",
+        //         success: function(data){
+        //             if(data.status == 200){
+        //                 option.xAxis[0].data = eval(data.data.category);
+        //                 option.series = eval(data.data.series);
+        //                 option.legend.data = eval(data.data.legend);
+        //                 myChart.hideLoading();
+        //                 myChart.setOption(option);
+        //             }else{
+        //                 myChart.hideLoading();
+        //                 alert("图表请求数据失败啦!");
+        //             }
+        //         }
+        //     });
+        // }
+    </script>
+{% endblock %}

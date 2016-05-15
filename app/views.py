@@ -134,6 +134,16 @@ def getHistoryAtmsphere():
     return JSONResponse(status=200, data=data)
 
 
+@app.route("/similarity")
+def similarity():
+    return render_template("similarity.html", navigate="similarity")
+
+
+@app.route("/json/getCalender")
+def getCalender():
+    pass
+
+
 def JSONResponse(status, data=None):
     if status == 200:
         return jsonify(status=status, info='sucess', data=data)
