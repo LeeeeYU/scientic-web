@@ -473,7 +473,7 @@ def doPredict():
     f = forest()
     # print entity.AP.validAtmosphere
     # f.relevancy.show()
-    f.setData('2007-1-21', 345)
+    f.setData(40, '2007-1-21', 345)
     # one = f.source[2]
     # print one.cityName, one.date, one.atmosphere, one.powerConsume, one.daytype
     f.normalize()
@@ -510,3 +510,4 @@ def doPredict():
     # print similaritys
 
     f.predict()
+doPredict()

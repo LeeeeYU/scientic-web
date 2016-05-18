@@ -1,66 +1,186 @@
 {% extends "base.html" %}
 {% block header %}
-    <link href="{{url_for('static', filename='css/bootstrap-datetimepicker.min.css')}}" rel="stylesheet" media="screen">
+    <link href="{{ url_for('static', filename='bootstrap/css/bootstrap-datetimepicker.css') }}" rel="stylesheet" media="screen">
 {% endblock %}
 {% block content %}
-    <div class="container featurette">        
-        <div class="row">
-            <select id="year" class="col-md-1 col-md-offset-1 form-control" style="width:10%">
-            </select>
-            <select id="month" class="col-md-1 form-control" style="width:10%;margin-left: 2%">
-            </select>
-            <select id="day" class="col-md-1 form-control" style="width:10%;margin-left: 2%">
-            </select>
+    <div class="container featurette">
+
+           <!--  错误的html -->
+        <!--     <div class="input-group date form_date col-md-4" data-date="" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
+                <input class="form-control" size="16" type="text" value="" readonly>
+                <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+            </div> -->
+
+            <!-- 正确的html -->
+        <input id="date" class="col-md-1 col-md-offset-2 form-control" style="width:20%"></input>
+
+
+
         </div>
         <div class="row">
-                <div class="input-group date form_date col-md-4" data-date="" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
-                    <input class="form-control" size="16" type="text" value="" readonly>
-                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
-                </div>
-        </div>
-        <div class="row">
-            <div id="graphic" class="col-md-12">
+            <div id="graphic" class="col-md-10 col-md-offset-2">
                 <div id="main" style="height:400px;width:100%"></div>
             </div><!--/span-->
         </div><!--/row-->
     </div><!--/.fluid-container-->
 {% endblock %}
 {% block script %}
-    <script type="text/javascript" src="{{url_for('static', filename='js/bootstrap-datetimepicker.js')}}" charset="UTF-8"></script>
-    <script type="text/javascript" src="{{url_for('static', filename='js/bootstrap-datetimepicker.zh-CN.js')}}" charset="UTF-8"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='bootstrap/js/bootstrap-datepicker.min.js') }}" charset="UTF-8"></script>
+<script type="text/javascript">
+$(function(){
 
-    <script type="text/javascript">
-    $('.form_date').datetimepicker({
-        language: 'zh-CN',
-        startDate: '2007-01-01',
-        endDate: '2008-02-01',
-        format: 'yyyy-mm-dd',
+
+    //错误的js
+    // $('.form_date').datetimepicker({
+    //     language: 'zh-CN',
+    //     startDate: '2007-01-01',
+    //     endDate: '2008-02-01',
+    //     format: 'yyyy-mm-dd',
+    //     weekStart: 1,
+    //     autoclose: 1,
+    //     startView: 2,
+    //     minView: 2,
+    //     forceParse: 0
+    // });
+
+
+    //正确的js
+    $('#date').datepicker({
+      format: 'yyyy-mm-dd',
         weekStart: 1,
-        autoclose: 1,
-        startView: 2,
-        minView: 2,
-        forceParse: 0
+        startDate: '2007-01-01',
+        endDate: '2007-12-31',
+        autoclose: true
+     });
+    require.config({
+        packages: [
+            {
+                name: 'echarts',
+                location: '{{ url_for('static', filename='echarts') }}',
+                main: 'echarts'
+            },
+            {
+                name: 'zrender',
+                // location: 'http://ecomfe.github.io/zrender/src',
+                location: '{{ url_for('static', filename='echarts/zrender') }}',
+                main: 'zrender'
+            }
+        ]
     });
-        // var calender = ['year': [], 'month': [], 'day':[]];
-        // function getCalener(){
-        //     $.ajax({
-        //         type: "GET",
-        //         async: false,
-        //         url: "{{url_for('getHistoryPowerConsume')}}",
-        //         dataType: "json",
-        //         success: function(data){
-        //             if(data.status == 200){
-        //                 option.xAxis[0].data = eval(data.data.category);
-        //                 option.series = eval(data.data.series);
-        //                 option.legend.data = eval(data.data.legend);
-        //                 myChart.hideLoading();
-        //                 myChart.setOption(option);
-        //             }else{
-        //                 myChart.hideLoading();
-        //                 alert("图表请求数据失败啦!");
-        //             }
-        //         }
-        //     });
-        // }
-    </script>
+
+    require(
+        [
+            'echarts',
+            'echarts/chart/radar'
+        ],
+        drawLine
+    )
+
+    function drawLine(ec){
+        myChart = ec.init(document.getElementById('main'));
+        myChart.showLoading({text: "图表数据正在努力加载..."});
+
+        var option = {
+            legend: {
+                orient : 'vertial',
+                x : 'left',
+                data:['预算分配（Allocated Budget）','实际开销（Actual Spending）']
+            },
+            toolbox: {
+                show : false,
+                feature : {
+                    mark : {show: true},
+                    dataView : {show: true, readOnly: false},
+                    restore : {show: true},
+                    saveAsImage : {show: true}
+                }
+            },
+            polar : [
+               {
+                   indicator : [
+                       { text: '第一天', max: 29200,min:14300},
+                       { text: '平均气温', max: 303,min:112},
+                       { text: '日最高气温', max: 344,min:128},
+                       { text: '日最低气温', max: 283,min:72},
+                       { text: '平均水汽压', max: 347,min:40},
+                       { text: '日最高气压', max: 10286,min:9953},
+                       { text: '平均气压', max: 10252,min:9923},
+                       { text: '日最低气压', max: 10224,min:9912},
+                       { text: '第七天', max: 29200,min:14300},
+                       { text: '第六天', max: 29200,min:14300},
+                       { text: '第五天', max: 29200,min:14300},
+                       { text: '第四天', max: 29200,min:14300},
+                       { text: '第三天', max: 29200,min:14300},
+                       { text: '第二天', max: 29200,min:14300}
+                    ]
+                }
+            ],
+            calculable : true,
+            series : [
+                {
+                    name: '待预测日 PK 相似日',
+                    type: 'radar',
+                    data : [
+                        {
+                            value : [4300, 10000, 28000, 35000, 50000, 19000],
+                            name : '预算分配（Allocated Budget）'
+                        }
+                    ]
+                }
+            ]
+        };
+
+        $.ajax({
+            type: "GET",
+            async: false,
+            url: "{{url_for('getSimilarity')}}"+"?date=2007-02-01",
+            dataType: "json",
+            success: function(result){
+                if(result.status == 200){
+
+                    option.series[0].data = result.data['seriesData'];
+                    option.legend.data = result.data['legendData'];
+                    option.legend.selected = {};
+                    for (var i = option.legend.data.length - 1; i > 0; i--) {
+                        option.legend.selected[option.legend.data[i]] = false;
+                    }
+                    myChart.hideLoading();
+                    console.log(option);
+                    myChart.setOption(option);
+                }else{
+                    myChart.hideLoading();
+                    alert("图表请求数据失败啦!");
+                }
+            }
+        });
+    }
+    $('#date').datepicker().on('changeDate',
+        function(ev){
+            $.ajax({
+                type: "GET",
+                url: "{{url_for('getSimilarity')}}"+"?date="+this.value,
+                dataType: "json",
+                success: function(result){
+                    if(result.status == 200){
+                        var option = myChart.getOption();
+                        option.series[0].data = result.data['seriesData'];
+                        option.legend.data = result.data['legendData'];
+                        option.legend.selected = {};
+                        for (var i = option.legend.data.length - 1; i > 0; i--) {
+                            option.legend.selected[option.legend.data[i]] = false;
+                        }
+                        myChart.hideLoading();
+                        console.log(option);
+                        myChart.setOption(option);
+                    }else{
+                        myChart.hideLoading();
+                        alert("图表请求数据失败啦!");
+                    }
+                }
+            })
+        }
+    );
+
+});
+</script>
 {% endblock %}

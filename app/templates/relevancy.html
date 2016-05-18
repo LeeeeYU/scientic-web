@@ -15,13 +15,13 @@
             packages: [
                 {
                     name: 'echarts',
-                    location: '{{ url_for('static', filename='js/echarts/src') }}',
+                    location: '{{ url_for('static', filename='echarts') }}',
                     main: 'echarts'
                 },
                 {
                     name: 'zrender',
                     // location: 'http://ecomfe.github.io/zrender/src',
-                    location: '{{ url_for('static', filename='js/zrender-master/src') }}',
+                    location: '{{ url_for('static', filename='echarts/zrender') }}',
                     main: 'zrender'
                 }
             ]

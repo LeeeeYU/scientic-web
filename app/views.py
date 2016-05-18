@@ -139,9 +139,50 @@ def similarity():
     return render_template("similarity.html", navigate="similarity")
 
 
-@app.route("/json/getCalender")
-def getCalender():
-    pass
+@app.route("/json/getSimilarity")
+def getSimilarity():
+    date = request.args.get('date', None)
+    data = db.select("SELECT c.comparation_id,c.date,p.powerConsume,p.firstday,p.secondday,p.thirdday,p.fourthday,p.fifthday, p.sixthday, p.seventhday,ah.temperatureAve,ah.temperatureMax,ah.temperatureMin,ah.waterPressureAve,ah.airPressureMax,ah.airPressureAve,ah.airPressureMin FROM comparation c INNER JOIN powerconsume p INNER JOIN atmosphere_history ah ON p.pc_id = c.pc_id AND c.ah_id = ah.ah_id WHERE c.date = ?", date)
+    legendData = []
+    seriesData = []
+    similarityData = []
+    legendData.append(data[0]['date'].strftime("%Y-%m-%d"))
+    seriesData.append({"name": data[0]['date'].strftime("%Y-%m-%d"), "value": [int(data[0]['firstday']), int(data[0]['temperatureAve']), int(data[0]['temperatureMax']), int(data[0]['temperatureMin']), int(data[0]['waterPressureAve']), int(data[0]['airPressureMax']), int(data[0]['airPressureAve']), int(data[0]['airPressureMin']), int(data[0]['seventhday']), int(data[0]['sixthday']), int(data[0]['fifthday']), int(data[0]['fourthday']), int(data[0]['thirdday']), int(data[0]['secondday'])]})
+    data = db.select("SELECT s.similarity,s.date,p.powerConsume,p.firstday,p.secondday,p.thirdday,p.fourthday,p.fifthday,p.sixthday,p.seventhday,ah.temperatureAve,ah.temperatureMax,ah.temperatureMin,ah.waterPressureAve,ah.airPressureMax,ah.airPressureAve,ah.airPressureMin FROM similarity s INNER JOIN powerConsume p INNER JOIN atmosphere_history ah ON s.pc_id = p.pc_id AND ah.ah_id = s.ah_id WHERE s.comparation_id=? ORDER BY s.similarity DESC LIMIT 20", data[0]['comparation_id'])
+    for item in data:
+        similarityData.append({"similarity":item["similarity"]})
+        legendData.append(item['date'].strftime("%Y-%m-%d"))
+        seriesData.append({"name": item['date'].strftime("%Y-%m-%d"), "value": [int(item['firstday']), int(item['temperatureAve']), int(item['temperatureMax']), int(item['temperatureMin']), int(item['waterPressureAve']), int(item['airPressureMax']), int(item['airPressureAve']), int(item['airPressureMin']), int(item['seventhday']), int(item['sixthday']), int(item['fifthday']), int(item['fourthday']), int(item['thirdday']), int(item['secondday'])]})
+
+    data = {'legendData': legendData, 'seriesData': seriesData, "similarityData": similarityData}
+    return JSONResponse(status=200, data=data)
+
+
+@app.route("/predictResult")
+def predictResult():
+    return render_template("predict_result.html", navigate="predictResult")
+
+
+@app.route("/json/getPredictResult")
+def getPredictResult():
+    data = db.select("SELECT p.date,p.powerConsume,c.predict_pc FROM powerconsume p LEFT JOIN comparation c ON p.date=c.date ORDER BY p.date")
+    series = []
+    legend = ["电力负荷", "预测负荷"]
+    category = []
+    realPCTemp = []
+    preidctPCTemp = []
+    for value in data:
+        category.append(value['date'].strftime("%Y-%m-%d"))
+        realPCTemp.append(float("%5.6f" % value["powerConsume"]))
+        if value['predict_pc'] is None:
+            preidctPCTemp.append('-')
+        else:
+            preidctPCTemp.append(float("%5.6f" % value["predict_pc"]))
+    series.append({"name": "电力负荷", "data": realPCTemp, "type": "line"})
+    # series.append({"data": temp, "name": "日电力负荷", "type": "line"})
+    series.append({"name": "预测负荷", "data": preidctPCTemp, "type": "line"})
+    data = {"series": series, "legend": legend, "category": category}
+    return JSONResponse(200, data)
 
 
 def JSONResponse(status, data=None):
