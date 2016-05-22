@@ -8,7 +8,7 @@ Created on Mon Apr 04 15:48:30 2016
 from copy import copy
 
 # powerConsume,daytype,airPressureAve,airPressureMax,airPressureMin,temperatureAve,temperatureMax,temperatureMin,,waterPressureAve,relativeHumidityAve,relativeHumidityMin,precipitation,smallEvaporation,largeEvaporation,windVelocityAve,windVelocityMax,windVelocityDirection,extremeWindVelocity,extremeWindVelocityDir,hoursOfSunshine
-order = ['date', 'cityName', 'year', 'month', 'day', 'daytype', 'detailNum', 'powerConsume', 'airPressureAve', 'airPressureMax', 'airPressureMin', 'temperatureAve', 'temperatureMax', 'temperatureMin', 'waterPressureAve',
+order = ['airPressureAve', 'airPressureMax', 'airPressureMin', 'temperatureAve', 'temperatureMax', 'temperatureMin', 'waterPressureAve',
          'relativeHumidityAve', 'relativeHumidityMin', 'precipitation', 'smallEvaporation', 'largeEvaporation', 'windVelocityAve', 'windVelocityMax', 'windVelocityDirection', 'extremeWindVelocity', 'extremeWindVelocityDir', 'hoursOfSunshine']
 fieldDescription = {
     'airPressureAve': '平均气压',

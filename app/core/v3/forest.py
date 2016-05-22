@@ -111,37 +111,37 @@ class relevancy(object):
 
 class normalization(object):
     def __init__(self):
-        self._res = db.select("SELECT\
-                        MAX(ah.airPressureMax) as airPressureMax, \
-                        MIN(ah.airPressureMin) as airPressureMin, \
-                        MAX(ah.temperatureMax) as temperatureMax, \
-                        MIN(ah.temperatureMin) as temperatureMin, \
-                        MAX(ah.waterPressureAve) as waterPressureMax, \
-                        MIN(ah.waterPressureAve) as waterPressureMin, \
-                        MAX(ah.relativeHumidityAve) as relativeHumidityMax, \
-                        MIN(ah.relativeHumidityMin) as relativeHumidityMin, \
-                        MAX(ah.precipitation) as precipitationMax, \
-                        MIN(ah.precipitation) as precipitationMin, \
-                        MAX(ah.smallEvaporation) as smallEvaporationMax, \
-                        MIN(ah.smallEvaporation) as smallEvaporationMin, \
-                        MAX(ah.largeEvaporation) as largeEvaporationMax, \
-                        MIN(ah.largeEvaporation) as largeEvaporationMin, \
-                        (CASE WHEN MAX(ah.windVelocityMax)>MAX(ah.extremeWindVelocity) THEN MAX(ah.windVelocityMax) ELSE MAX(ah.extremeWindVelocity) END) as windVelocityMax, \
-                        (CASE WHEN MIN(ah.windVelocityAve)<MIN(ah.extremeWindVelocity) THEN MIN(ah.windVelocityAve) ELSE MIN(ah.extremeWindVelocity) END) as windVelocityMin, \
-                        MAX(ah.hoursOfSunshine) as hoursOfSunshineMax, \
-                        MIN(ah.hoursOfSunshine) as hoursOfSunshineMin\
-                     FROM\
-                        atmosphere_history ah\
-                    where\
-                        ah.cityName = 'shanwei';")
+        self._res = db.select("SELECT " +
+                                "MAX(ah.airPressureMax) as airPressureMax, " +
+                                "MIN(ah.airPressureMin) as airPressureMin, " +
+                                "MAX(ah.temperatureMax) as temperatureMax, " +
+                                "MIN(ah.temperatureMin) as temperatureMin, " +
+                                "MAX(ah.waterPressureAve) as waterPressureMax, " +
+                                "MIN(ah.waterPressureAve) as waterPressureMin, " +
+                                "MAX(ah.relativeHumidityAve) as relativeHumidityMax, " +
+                                "MIN(ah.relativeHumidityMin) as relativeHumidityMin,  " +
+                                "MAX(ah.precipitation) as precipitationMax,  " +
+                                "MIN(ah.precipitation) as precipitationMin,  " +
+                                "MAX(ah.smallEvaporation) as smallEvaporationMax,  " +
+                                "MIN(ah.smallEvaporation) as smallEvaporationMin,  " +
+                                "MAX(ah.largeEvaporation) as largeEvaporationMax,  " +
+                                "MIN(ah.largeEvaporation) as largeEvaporationMin,  " +
+                                "(CASE WHEN MAX(ah.windVelocityMax)>MAX(ah.extremeWindVelocity) THEN MAX(ah.windVelocityMax) ELSE MAX(ah.extremeWindVelocity) END) as windVelocityMax,  " +
+                                "(CASE WHEN MIN(ah.windVelocityAve)<MIN(ah.extremeWindVelocity) THEN MIN(ah.windVelocityAve) ELSE MIN(ah.extremeWindVelocity) END) as windVelocityMin,  " +
+                                "MAX(ah.hoursOfSunshine) as hoursOfSunshineMax,  " +
+                                "MIN(ah.hoursOfSunshine) as hoursOfSunshineMin " +
+                            "FROM " +
+                                "atmosphere_history ah " +
+                            "where " +
+                                "ah.cityName = 'shanwei';")
         self._res = self._res[0]
-        pc = db.select("SELECT\
-                        MAX(powerConsume) as powerConsumeMax, \
-                        MIN(powerConsume) as powerConsumeMin\
-                     FROM\
-                        powerconsume\
-                    where\
-                        cityName = 'shanwei';")
+        pc = db.select("SELECT " +
+                            "MAX(powerConsume) as powerConsumeMax,  " +
+                            "MIN(powerConsume) as powerConsumeMin " +
+                        "FROM " +
+                            "powerconsume " +
+                        "where " +
+                        "cityName = 'shanwei';")
         self._res = dict(self._res, **pc[0])
         # self._res.extend(pc[0])
         for key in self._res.iterkeys():
@@ -518,4 +518,5 @@ def doPredict():
 
     f.predict()
 
-doPredict()
+if __name__ is "__main__":
+    doPredict()
